@@ -74,13 +74,13 @@ for i in range(1,6):
     job_id = submit_result['job_id']
 
     job_result = get_job_result(job_id)
-    l=len(job_result['annotations'])
+    l = len(job_result['annotations'])
     for i in range(0,l):
         # excel 출력
         print(job_result['annotations'][i]['objects'][0]['keypoints'])
-#response = session.get('https://cv-api.kakaobrain.com/pose/job/' + job_id)
-#print(response.status_code, response.json())
-#print(response.status_code.knee)
+        #response = session.get('https://cv-api.kakaobrain.com/pose/job/' + job_id)
+        #print(response.status_code, response.json())
+        #print(response.status_code.knee)
     if job_result['status'] == 'success':
         print("success")
         visualize(job_result)
