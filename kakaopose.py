@@ -5,18 +5,12 @@ import numpy as np
 from matplotlib import pyplot as plt
 from pycocotools.coco import COCO
 from requests import Session
+import cv2
 
 APP_KEY = '573c947b3506e5a9cc39a61b2597cb71'
 
 session = Session()
 session.headers.update({'Authorization': 'KakaoAK ' + APP_KEY})
-
-"""
-def submit_job_by_url(video_url):
-    response = session.post('https://cv-api.kakaobrain.com/pose/job', data={'video_url': video_url})
-    response.raise_for_status()
-    return response.json()
-"""
 
 
 def submit_job_by_file(video_file_path):
@@ -62,6 +56,7 @@ def visualize(resp, threshold=0.2):
         plt.show()
 
 
+"""
 #VIDEO_URL = 'http://example.com/example.mp4'
 for i in range(1,6):
     VIDEO_FILE_PATH = str(i)+'.mp4'
@@ -86,3 +81,25 @@ for i in range(1,6):
         visualize(job_result)
     else:
         print(job_result)
+"""
+
+"""
+for i in range(1,6):
+    VIDEO_FILE_PATH = str(i)+'.mp4'
+
+    submit_result = submit_job_by_file(VIDEO_FILE_PATH)
+    job_id = submit_result['job_id']
+    job_result = get_job_result(job_id)
+    print("Width : ", job_result['video']['width'])
+    print("Height : ", job_result['video']['height'])
+"""
+
+
+VIDEO_FILE_PATH = '1.mp4'
+
+submit_result = submit_job_by_file(VIDEO_FILE_PATH)
+job_id = submit_result['job_id']
+job_result = get_job_result(job_id)
+keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints']).reshape(-1, 3)
+print(keypoints.shape)
+print(keypoints)

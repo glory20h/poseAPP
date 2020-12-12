@@ -1,2 +1,7 @@
+Cython
+numpy
+matplotlib
 requests
 pycocotools-windows
+pillow
+opencv-python
