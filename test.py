@@ -1,20 +1,19 @@
 from tkinter import *
 from PIL import ImageTk, Image
-import numpy as np
-import matplotlib.pyplot as plt
+from tkinter import filedialog
 
 root = Tk()
 root.title('Tkinter Test')
-root.geometry("400x200")
 
-def graph():
-    house_prices = np.random.normal(200000, 25000, 5000)
-    plt.hist(house_prices, 50)
-    plt.show()
+def open():
+    global my_image
+    root.filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetypes=(("png files", "*.png"), ("all files", "*.*")))
+    my_label = Label(root, text=root.filename).pack()
+    my_image = ImageTk.PhotoImage(Image.open(root.filename))
+    my_image_label = Label(image=my_image).pack()
 
 
-my_button = Button(root, text="Graph It!", command=graph)
-my_button.pack()
+my_btn = Button(root, text="Open File", command=open).pack()
 
 root.mainloop()
 

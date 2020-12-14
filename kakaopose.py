@@ -56,6 +56,13 @@ def visualize(resp, threshold=0.2):
         plt.show()
 
 
+def calculateAngle(a, b, c):
+    ba = a - b
+    bc = c - b
+    cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
+    angle = np.arccos(cosine_angle)
+    return round(np.degrees(angle), 2)
+
 """
 #VIDEO_URL = 'http://example.com/example.mp4'
 for i in range(1,6):
@@ -84,22 +91,52 @@ for i in range(1,6):
 """
 
 """
-for i in range(1,6):
-    VIDEO_FILE_PATH = str(i)+'.mp4'
+VIDEO_FILE_PATH = '1.mp4'
+kp_cat = np.array([])
 
-    submit_result = submit_job_by_file(VIDEO_FILE_PATH)
-    job_id = submit_result['job_id']
-    job_result = get_job_result(job_id)
-    print("Width : ", job_result['video']['width'])
-    print("Height : ", job_result['video']['height'])
+submit_result = submit_job_by_file(VIDEO_FILE_PATH)
+job_id = submit_result['job_id']
+job_result = get_job_result(job_id)
+for frame in job_result['annotations']:
+    kp_resp = np.asarray(frame['objects'][0]['keypoints'])
+    kp_cat = np.concatenate((kp_cat, kp_resp))
+
+kp_cat = kp_cat.reshape((1, -1))
+print(kp_cat.shape)
 """
 
-
+"""
 VIDEO_FILE_PATH = '1.mp4'
 
 submit_result = submit_job_by_file(VIDEO_FILE_PATH)
 job_id = submit_result['job_id']
 job_result = get_job_result(job_id)
-keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints']).reshape(-1, 3)
+print("bbox : ", job_result['annotations'][0]['objects'][0]['bbox'])
+# print(job_result['annotations'][0]['objects'][0]['keypoints'])
+keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints']).reshape((1, -1))
 print(keypoints.shape)
 print(keypoints)
+"""
+
+
+for i in range(1, 6):
+    VIDEO_FILE_PATH = str(i) + '.mp4'
+    kp_cat = np.array([])
+
+    submit_result = submit_job_by_file(VIDEO_FILE_PATH)
+    job_id = submit_result['job_id']
+    job_result = get_job_result(job_id)
+    for frame in job_result['annotations']:
+        kp_resp = np.asarray(frame['objects'][0]['keypoints'])
+        kp_cat = np.concatenate((kp_cat, kp_resp))
+
+    kp_cat = kp_cat.reshape((1, -1))
+
+    if i == 1:
+        keypoints = kp_cat
+    else:
+        keypoints = np.concatenate((keypoints, kp_cat), axis=0)
+
+kp_avg = np.average(keypoints, axis=0)
+
+np.save('./kp_avg', kp_avg)
