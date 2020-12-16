@@ -34,6 +34,14 @@ import numpy as np
 # cat = np.concatenate((cat, b))
 # print(cat)
 
-exp = np.arange(1, 25)
-exp = exp.reshape((4, 3, 2))
-print(exp[1][0][0])
+# exp = np.arange(1, 25)
+# exp = exp.reshape((4, 3, 2))
+# print(exp[1][0][0])
+
+cat = np.array([])
+a = 35
+b = 42
+
+cat = np.append(cat, a)
+cat = np.append(cat, b)
+print(cat)

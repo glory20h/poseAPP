@@ -63,7 +63,7 @@ def visualize(resp, threshold=0.2):
         coco.showAnns(frame['objects'])
         plt.show()
 
-
+# Example Use : kneeAngle = calculateAngle(np.array([hipX, hipY]), np.array([kneeX, kneeY]), np.array([ankleX, ankleY]))
 def calculateAngle(a, b, c):
     ba = a - b
     bc = c - b
@@ -77,19 +77,25 @@ def analyze_video(video_file_path):
     job_id = submit_result['job_id']
     job_result = get_job_result(job_id)
     keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints'])
-    print(keypoints.shape)
+    print(keypoints)
+
+def exp(video_file_path):
+    cap = cv2.VideoCapture(video_file_path)
+    ret, img = cap.read()
+    if ret:
+        cv2.imshow('Frame', img)
 
 
 def find_file():
     root.filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetypes=(("mp4 files", "*.mp4"), ("all files", "*.*")))
     file_path = root.filename
     analyze_video(file_path)
+    exp(file_path)
 
 
 my_btn = Button(root, text="Open File", command=find_file).pack()
 
 root.mainloop()
-
 
 
 ######################################################## CODES TO RUN ########################################################
@@ -146,11 +152,10 @@ if job_result['status'] == 'success':
 else:
     print("failed")
 
-print("bbox : ", job_result['annotations'][0]['objects'][0]['bbox'])
-# print(job_result['annotations'][0]['objects'][0]['keypoints'])
-keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints']).reshape((1, -1))
-print(keypoints.shape)
-print(keypoints)
+# print("bbox : ", job_result['annotations'][0]['objects'][0]['bbox'])
+print(job_result['annotations'][0]['objects'][0]['keypoints'])
+# keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints']).reshape((1, -1))
+# print(keypoints)
 """
 
 """
