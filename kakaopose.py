@@ -10,7 +10,7 @@ import cv2
 from tkinter import *
 from tkinter import filedialog
 
-APP_KEY = '573c947b3506e5a9cc39a61b2597cb71'
+APP_KEY = '30c1f56178f37a3d34bc89bb1efeee44'
 
 session = Session()
 session.headers.update({'Authorization': 'KakaoAK ' + APP_KEY})
@@ -25,6 +25,7 @@ def submit_job_by_file(video_file_path):
     with open(video_file_path, 'rb') as f:
         response = session.post('https://cv-api.kakaobrain.com/pose/job', files=[('file', f)])
         response.raise_for_status()
+        print("HTTP Status code :", response.status_code)
         return response.json()
 
 
@@ -119,6 +120,11 @@ VIDEO_FILE_PATH = '1.mp4'
 submit_result = submit_job_by_file(VIDEO_FILE_PATH)
 job_id = submit_result['job_id']
 job_result = get_job_result(job_id)
+if job_result['status'] == 'success':
+    print("success")
+else:
+    print("failed")
+
 print("bbox : ", job_result['annotations'][0]['objects'][0]['bbox'])
 # print(job_result['annotations'][0]['objects'][0]['keypoints'])
 keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints']).reshape((1, -1))
@@ -127,7 +133,7 @@ print(keypoints)
 """
 
 """
-5개 비디오 keypoint의 '평균'을 내서 kp_avg.npy에 저장하는 코드
+# 5개 비디오 keypoint의 평균을 내서 kp_avg.npy에 저장
 for i in range(1, 6):
     VIDEO_FILE_PATH = str(i) + '.mp4'
     kp_cat = np.array([])
@@ -156,20 +162,14 @@ def analyze(video_file_path):
     submit_result = submit_job_by_file(video_file_path)
     job_id = submit_result['job_id']
     job_result = get_job_result(job_id)
-    if job_result['status'] == 'success':
-        print("success")
-    else:
-        print("failed")
-    # keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints'])
-    # print(keypoints.shape)
+    keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints'])
+    print(keypoints.shape)
 
 
 def find_file():
     root.filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetypes=(("mp4 files", "*.mp4"), ("all files", "*.*")))
     file_path = root.filename
-    print(file_path)
-    print(os.path.getsize(file_path) < 5e7)
-    # analyze(file_path)
+    analyze(file_path)
 
 
 my_btn = Button(root, text="Open File", command=find_file).pack()
