@@ -7,10 +7,17 @@ from pycocotools.coco import COCO
 from requests import Session
 import cv2
 
+from tkinter import *
+from tkinter import filedialog
+
 APP_KEY = '573c947b3506e5a9cc39a61b2597cb71'
 
 session = Session()
 session.headers.update({'Authorization': 'KakaoAK ' + APP_KEY})
+
+# Tkinter 창
+root = Tk()
+root.title('Tkinter Test')
 
 
 def submit_job_by_file(video_file_path):
@@ -62,6 +69,7 @@ def calculateAngle(a, b, c):
     cosine_angle = np.dot(ba, bc) / (np.linalg.norm(ba) * np.linalg.norm(bc))
     angle = np.arccos(cosine_angle)
     return round(np.degrees(angle), 2)
+
 
 """
 #VIDEO_URL = 'http://example.com/example.mp4'
@@ -118,7 +126,8 @@ print(keypoints.shape)
 print(keypoints)
 """
 
-
+"""
+5개 비디오 keypoint의 '평균'을 내서 kp_avg.npy에 저장하는 코드
 for i in range(1, 6):
     VIDEO_FILE_PATH = str(i) + '.mp4'
     kp_cat = np.array([])
@@ -140,3 +149,29 @@ for i in range(1, 6):
 kp_avg = np.average(keypoints, axis=0)
 
 np.save('./kp_avg', kp_avg)
+"""
+
+
+def analyze(video_file_path):
+    submit_result = submit_job_by_file(video_file_path)
+    job_id = submit_result['job_id']
+    job_result = get_job_result(job_id)
+    if job_result['status'] == 'success':
+        print("success")
+    else:
+        print("failed")
+    # keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints'])
+    # print(keypoints.shape)
+
+
+def find_file():
+    root.filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetypes=(("mp4 files", "*.mp4"), ("all files", "*.*")))
+    file_path = root.filename
+    print(file_path)
+    print(os.path.getsize(file_path) < 5e7)
+    # analyze(file_path)
+
+
+my_btn = Button(root, text="Open File", command=find_file).pack()
+
+root.mainloop()
