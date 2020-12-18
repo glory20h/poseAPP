@@ -41,6 +41,7 @@ def get_job_result(job_id):
             return response
 
 
+# resp -> job_result
 def visualize(resp, threshold=0.2):
     # COCO API를 활용한 시각화
     coco = COCO()
@@ -63,6 +64,7 @@ def visualize(resp, threshold=0.2):
         coco.showAnns(frame['objects'])
         plt.show()
 
+
 # Example Use : kneeAngle = calculateAngle(np.array([hipX, hipY]), np.array([kneeX, kneeY]), np.array([ankleX, ankleY]))
 def calculateAngle(a, b, c):
     ba = a - b
@@ -76,8 +78,10 @@ def analyze_video(video_file_path):
     submit_result = submit_job_by_file(video_file_path)
     job_id = submit_result['job_id']
     job_result = get_job_result(job_id)
-    keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints'])
-    print(keypoints)
+    print(job_result)
+    # keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints'])
+    # print(keypoints)
+
 
 def exp(video_file_path):
     cap = cv2.VideoCapture(video_file_path)
@@ -90,7 +94,7 @@ def find_file():
     root.filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetypes=(("mp4 files", "*.mp4"), ("all files", "*.*")))
     file_path = root.filename
     analyze_video(file_path)
-    exp(file_path)
+    # exp(file_path)
 
 
 my_btn = Button(root, text="Open File", command=find_file).pack()
