@@ -5,3 +5,5 @@ requests
 pycocotools-windows
 pillow
 opencv-python
+fastdtw
+scipy

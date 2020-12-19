@@ -15,11 +15,6 @@ APP_KEY = '30c1f56178f37a3d34bc89bb1efeee44'
 session = Session()
 session.headers.update({'Authorization': 'KakaoAK ' + APP_KEY})
 
-# Tkinter 창
-root = Tk()
-root.title('Tkinter Test')
-
-
 def submit_job_by_file(video_file_path):
     assert os.path.getsize(video_file_path) < 5e7
     with open(video_file_path, 'rb') as f:
@@ -49,9 +44,9 @@ def visualize(resp, threshold=0.2):
     coco.createIndex()
     width, height = resp['video']['width'], resp['video']['height']
 
-    # 낮은 신뢰도를 가진 keypoint들은 무시
     for frame in resp['annotations']:
         for annotation in frame['objects']:
+            # 낮은 신뢰도를 가진 keypoint들은 무시
             keypoints = np.asarray(annotation['keypoints']).reshape(-1, 3)
             low_confidence = keypoints[:, -1] < threshold
             keypoints[low_confidence, :] = [0, 0, 0]
@@ -73,36 +68,34 @@ def calculateAngle(a, b, c):
     angle = np.arccos(cosine_angle)
     return round(np.degrees(angle), 2)
 
+# 5개 비디오 knee 각도, elbow 각도를 knee_1.npy, elbow_1.npy에 저장
+for i in range(1, 6):
+    VIDEO_FILE_PATH = str(i) + '.mp4'
+    knee_cat = np.array([])
+    elbow_cat = np.array([])
 
-def analyze_video(video_file_path):
-    submit_result = submit_job_by_file(video_file_path)
+    submit_result = submit_job_by_file(VIDEO_FILE_PATH)
     job_id = submit_result['job_id']
     job_result = get_job_result(job_id)
-    print(job_result)
-    # keypoints = np.asarray(job_result['annotations'][0]['objects'][0]['keypoints'])
-    # print(keypoints)
+    for frame in job_result['annotations']:
+        kp_resp = np.asarray(frame['objects'][0]['keypoints']).reshape((17,3))
+
+        r_shoulder = np.array([kp_resp[6][0], kp_resp[6][1]])  # 7
+        r_elbow = np.array([kp_resp[8][0], kp_resp[8][1]])  # 9
+        r_wrist = np.array([kp_resp[10][0], kp_resp[10][1]])  # 11
+        elbow_angle = calculateAngle(r_shoulder, r_elbow, r_wrist)
+        elbow_cat = np.append(elbow_cat, elbow_angle)
+
+        r_hip = np.array([kp_resp[12][0], kp_resp[12][1]]) # 13
+        r_knee = np.array([kp_resp[14][0], kp_resp[14][1]]) # 15
+        r_ankle = np.array([kp_resp[16][0], kp_resp[16][1]]) # 17
+        knee_angle = calculateAngle(r_hip, r_knee, r_ankle)
+        knee_cat = np.append(knee_cat, knee_angle)
+
+    np.save('./elbow_' + str(i), elbow_cat)
+    np.save('./knee_' + str(i), knee_cat)
 
 
-def exp(video_file_path):
-    cap = cv2.VideoCapture(video_file_path)
-    ret, img = cap.read()
-    if ret:
-        cv2.imshow('Frame', img)
-
-
-def find_file():
-    root.filename = filedialog.askopenfilename(initialdir="/", title="Select A File", filetypes=(("mp4 files", "*.mp4"), ("all files", "*.*")))
-    file_path = root.filename
-    analyze_video(file_path)
-    # exp(file_path)
-
-
-my_btn = Button(root, text="Open File", command=find_file).pack()
-
-root.mainloop()
-
-
-######################################################## CODES TO RUN ########################################################
 """
 #VIDEO_URL = 'http://example.com/example.mp4'
 for i in range(1,6):
