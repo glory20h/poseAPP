@@ -1,25 +1,7 @@
-import numpy as np
+# Dynamic Time Warping
+
 from fastdtw import fastdtw
 from scipy.spatial.distance import euclidean
-
-# elbow1 = np.load('./elbow_1.npy')
-# elbow2 = np.load('./elbow_2.npy')
-#
-# distance, path = fastdtw(elbow1, elbow2, dist=euclidean)
-# print(distance)
-# print(path)
-
-# x = np.array([1, 2, 3, 3, 7])
-# y = np.array([1, 2, 2, 2, 2])
-#
-# distance, path = fastdtw(x, y, dist=euclidean)
-#
-# print(distance)
-# print(path)
-
-# x = np.array([1, 7, 2, 8, 3, 9, 4, 10])
-# x_trim = x < 5
-# print(x_trim)
 
 def DTW(A, B):
     alen = len(A)
@@ -78,13 +60,4 @@ def DTW(A, B):
 
     score, _ = fastdtw(A, B, dist=euclidean)
 
-    return A_trim, B_trim, score, A_changes, B_changes
-
-
-A = np.array([1, 2, 6, 5, 7, 8])
-B = np.array([1, 3, 5, 7, 6, 8, 9, 10, 8, 7])
-print(DTW(A, B))
-
-# distance, path = fastdtw(A, B, dist=euclidean)
-# print(distance)
-# print(path)
+    return A_trim, B_trim, score, A_changes
