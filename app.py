@@ -15,7 +15,7 @@ from PIL import Image, ImageTk
 
 import dtw
 
-APP_KEY = '30c1f56178f37a3d34bc89bb1efeee44'
+APP_KEY = 'e5c2d25e6193a1d9cb59a2ca7c6f2a77'
 
 session = Session()
 session.headers.update({'Authorization': 'KakaoAK ' + APP_KEY})
@@ -229,7 +229,7 @@ def compare(elbow_input, knee_input, job_result, file_path):
 def timer_display_elbow(idx, elbow_trim_frame, elbow_input_trim, elbow_ans_trim, knee_trim_frame, knee_input_trim, knee_ans_trim, job_result, file_path):
     # Loop for elbow
     elbow_error = (elbow_input_trim[idx]-elbow_ans_trim[idx])/elbow_ans_trim[idx]
-    if elbow_error > 0.075:
+    if elbow_error > 0.03:
         elbow_correct = False
     else:
         elbow_correct = True
